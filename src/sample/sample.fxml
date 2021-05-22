@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/11.0.1"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <columnConstraints>
-        <ColumnConstraints/>
+        <ColumnConstraints />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints/>
+        <RowConstraints />
     </rowConstraints>
-    <AnchorPane fx:id="Pane" prefHeight="600.0" prefWidth="400.0"/>
+    <AnchorPane fx:id="Pane" prefHeight="600.0" prefWidth="400.0">
+      <children>
+         <Button fx:id="Cancel" layoutX="301.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="38.0" text="&lt;-" />
+         <Button fx:id="Restart" layoutX="23.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Restart" />
+      </children></AnchorPane>
 </GridPane>
