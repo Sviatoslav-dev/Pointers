@@ -31,9 +31,6 @@ public class Controller {
     private ArrayList<ArrayList<Button>> arrows;
     private Stack<Integer> solution;
     private ArrayList<Point> possible;
-    private ArrayList<Integer> answer;
-    private ArrayList<ArrayList<Integer>> sollMatrix;
-    private ArrayList<Point> possibleAns;
 
     @FXML
     void initialize() {
@@ -46,7 +43,6 @@ public class Controller {
         HidhlightPosible ();
         Cancel.setOnAction(event->ClickCancel());
         Restart.setOnAction(event->ClickRestart());
-        hint.setOnAction(event->FindAnswer());
     }
 
     void InputMatrix () {
@@ -225,7 +221,20 @@ public class Controller {
     }
 
     void HidhlightPosible () {
+        possible = FindPossible(solution);
+
         Cancel.setStyle("-fx-background-color: white");
+        MakeAllWhite ();
+
+        for (int i = 0; i < possible.size(); i++) {
+            arrows.get(possible.get(i).getY()).get(possible.get(i).getY()).setStyle("-fx-background-color: green");
+        }
+
+        arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: yellow");
+    }
+
+    ArrayList<Point> FindPossible (Stack<Integer> stack) {
+        ArrayList<Point> res = new ArrayList<>();
         int i = 0, j = 0;
 
         int currentY = (solution.peek() - 1) / 5;
@@ -266,20 +275,17 @@ public class Controller {
                 break;
         }
 
-        MakeAllWhite ();
-
         for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
-            if ((y != 0 || x != 0) && (y != 4 || x != 4) && (y != currentY || x != currentX) && !WasHere(y * 5 + x + 1)) {
-                arrows.get(y).get(x).setStyle("-fx-background-color: green");
-                possible.add(new Point(y, x));
-            } else if (y == currentY && x == currentX) {
-                arrows.get(y).get(x).setStyle("-fx-background-color: yellow");
+            if ((y != 0 || x != 0) && (y != 4 || x != 4) && (y != currentY || x != currentX) && !WasHere(y * 5 + x + 1, stack)) {
+                res.add(new Point(y, x));
             }
         }
+
+        return res;
     }
 
     void ClickArrow (int y, int x) {
-        if ((y != 4 || x != 4) && IsPossible(y, x)) {
+        if ((y != 4 || x != 4) && IsPossible(y, x, possible)) {
             arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: red");
             solution.push(y * 5 + x + 1);
             possible.clear();
@@ -287,11 +293,11 @@ public class Controller {
         }
     }
 
-    boolean IsPossible (int y, int x) {
+    boolean IsPossible (int y, int x, ArrayList<Point> poss) {
 
         boolean res = false;
 
-        for (Point point : possible) {
+        for (Point point : poss) {
             if (point.getY() == y && point.getX() == x) {
                 res = true;
                 break;
@@ -304,15 +310,15 @@ public class Controller {
     void MakeAllWhite () {
         for (int i = 0; i < MatrixSize; i++) {
             for (int j = 0; j < MatrixSize; j++) {
-                if (!WasHere (i * 5 + j + 1))
+                if (!WasHere (i * 5 + j + 1, solution))
                     arrows.get(i).get(j).setStyle("-fx-background-color: white");
             }
         }
     }
 
-    boolean WasHere (int n) {
+    boolean WasHere (int n, Stack<Integer> closed) {
         boolean res = false;
-        Stack<Integer> way = (Stack<Integer>) solution.clone();
+        Stack<Integer> way = (Stack<Integer>) closed.clone();
 
         while (way.size() > 0) {
             if (way.peek() == n)
@@ -356,159 +362,5 @@ public class Controller {
         HidhlightPosible ();
         Cancel.setOnAction(event->ClickCancel());
         Restart.setOnAction(event->ClickRestart());*/
-    }
-
-    void FindAnswer () {
-        possibleAns = new ArrayList<>();
-        sollMatrix = new ArrayList<>();
-        for (int i = 0; i < MatrixSize; i++) {
-            sollMatrix.add(new ArrayList<>());
-            for (int j = 0; j < MatrixSize; j++) {
-                sollMatrix.get(i).add(0);
-            }
-        }
-        int sSize = solution.size();
-        Stack<Integer> soll = (Stack) solution.clone();
-        Stack<Integer> stack = (Stack) solution.clone();
-        answer = new ArrayList<>(sSize);
-
-        for (int i = 0; i < sSize; i++) {
-            answer.add(0);
-        }
-
-        for (int i = sSize - 1; i > -1; i--) {
-            answer.set(i, soll.peek());
-            sollMatrix.get((soll.peek() - 1) / 5).set((soll.peek() - 1) % 5, soll.peek());
-            if (soll.size() > 0)
-                soll.pop();
-        }
-
-        //System.out.println(soll);
-
-        ways = new ArrayList<>();
-        ArrayList<Point> able = new ArrayList<>();
-
-        int currentY = (solution.peek() - 1) / 5;
-        int currentX = (solution.peek() - 1) % 5;
-        int currentNum = sSize;
-
-        sollMatrix.get(4).set(4, 25);
-
-        stack.push(1);
-
-
-        while (currentNum != 24) {
-            FindPossAns(stack);
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    if (i != 0 || j != 0) {
-                        for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
-                            if (sollMatrix.get(y).get(x) == 0 && !HaveWay(stack, y * 5 + x + 1) && !WasHere(y * 5 + x + 1) && IsPossibleAns (y, x)) {
-                                able.add(new Point(y, x));
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (able.size() > 0) {
-                int rand = (int)(Math.random() * able.size());
-
-                currentX = able.get(rand).getX();
-                currentY = able.get(rand).getY();
-
-                currentNum++;
-                stack.push(currentY * 5 + currentX + 1);
-
-                System.out.println(stack);
-
-                sollMatrix.get(currentY).set(currentX, currentNum);
-
-                able.clear();
-
-            } else {
-                ways.add((Stack<Integer>) stack.clone());
-                stack.pop();
-
-                if (stack.size() <= sSize) {
-                    break;
-                }
-                System.out.println(stack);
-
-                sollMatrix.get(currentY).set(currentX, 0);
-
-                currentY = (stack.peek() - 1) / 5;
-                currentX = (stack.peek() - 1) % 5;
-                currentNum--;
-            }
-        }
-
-        if (stack.size() >= 24) {
-            arrows.get((stack.peek() - 1) / 5).get((stack.peek() - 1) % 5).setStyle("-fx-background-color: blue");
-        } else {
-            Cancel.setStyle("-fx-background-color: blue");
-        }
-    }
-
-    boolean IsPossibleAns (int y, int x) {
-
-        boolean res = false;
-
-        for (Point point : possibleAns) {
-            if (point.getY() == y && point.getX() == x) {
-                res = true;
-                break;
-            }
-        }
-
-        return res;
-    }
-
-    void FindPossAns (Stack<Integer> s) {
-        int i = 0, j = 0;
-
-        int currentY = (s.peek() - 1) / 5;
-        int currentX = (s.peek() - 1) % 5;
-
-        switch (directions.get(currentY).get(currentX)) {
-            case 0:
-                i = 0;
-                j = -1;
-                break;
-            case 1:
-                i = 1;
-                j = -1;
-                break;
-            case 2:
-                i = 1;
-                j = 0;
-                break;
-            case 3:
-                i = 1;
-                j = 1;
-                break;
-            case 4:
-                i = 0;
-                j = 1;
-                break;
-            case 5:
-                i = -1;
-                j = 1;
-                break;
-            case 6:
-                i = -1;
-                j = 0;
-                break;
-            case 7:
-                i = -1;
-                j = -1;
-                break;
-        }
-
-        for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
-            if ((y != 0 || x != 0) && (y != 4 || x != 4) && (y != currentY || x != currentX) && !WasHere(y * 5 + x + 1)) {
-                possibleAns.add(new Point(y, x));
-            }
-        }
     }
 }
