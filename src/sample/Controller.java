@@ -43,6 +43,7 @@ public class Controller {
         HidhlightPosible ();
         Cancel.setOnAction(event->ClickCancel());
         Restart.setOnAction(event->ClickRestart());
+        hint.setOnAction(event->ClickHint());
     }
 
     void InputMatrix () {
@@ -66,12 +67,14 @@ public class Controller {
 
         stack.push(1);
 
-        while (currentNum != 24) {
+        while (currentNum != 25) {
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
                     if (i != 0 || j != 0) {
                         for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
-                            if (matrix.get(y).get(x) == 0 && !HaveWay(stack, y * 5 + x + 1)) {
+                            if (matrix.get(y).get(x) == 0 && !HaveWay(stack, y * 5 + x + 1, ways)) {
+                                able.add(new Point(y, x));
+                            } else if (matrix.get(y).get(x) == 25 && stack.size() == 24) {
                                 able.add(new Point(y, x));
                             }
                         }
@@ -110,12 +113,12 @@ public class Controller {
 
     }
 
-    boolean HaveWay (Stack<Integer> s, int a) {
+    boolean HaveWay (Stack<Integer> s, int a, ArrayList<Stack<Integer>> wayss) {
         boolean res = false;
         Stack<Integer> newWay = (Stack<Integer>) s.clone();
         newWay.push(a);
 
-        for (Stack<Integer> way : ways) {
+        for (Stack<Integer> way : wayss) {
             if (way.equals(newWay)) {
                 res = true;
                 break;
@@ -161,7 +164,6 @@ public class Controller {
 
     void InputDirections () {
         int y1 = 0, y2 = 0, x1 = 0, x2 = 0;
-        //double angle;
 
         directions = new ArrayList<>();
         for (int i = 0; i < MatrixSize; i++) {
@@ -186,12 +188,6 @@ public class Controller {
 
                 }
             }
-
-            /*System.out.println("cos " + (-(y2 - y1))/(Math.sqrt((y2-y1)*(y2-y1)+(x2-x1)*(x2-x1))));
-            angle = Math.acos((-(y2 - y1))/(Math.sqrt((y2-y1)*(y2-y1)+(x2-x1)*(x2-x1))));
-            System.out.println(angle);
-
-            directions.get(y1).set(x1, (int)((angle / (2 * Math.PI)) * 7 + 0.1));*/
 
             if (y2 < y1 && x2 < x1) {
                 directions.get(y1).set(x1, 7);
@@ -226,8 +222,8 @@ public class Controller {
         Cancel.setStyle("-fx-background-color: white");
         MakeAllWhite ();
 
-        for (int i = 0; i < possible.size(); i++) {
-            arrows.get(possible.get(i).getY()).get(possible.get(i).getY()).setStyle("-fx-background-color: green");
+        for (Point point : possible) {
+            arrows.get(point.getY()).get(point.getX()).setStyle("-fx-background-color: green");
         }
 
         arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: yellow");
@@ -237,8 +233,8 @@ public class Controller {
         ArrayList<Point> res = new ArrayList<>();
         int i = 0, j = 0;
 
-        int currentY = (solution.peek() - 1) / 5;
-        int currentX = (solution.peek() - 1) % 5;
+        int currentY = (stack.peek() - 1) / 5;
+        int currentX = (stack.peek() - 1) % 5;
 
         switch (directions.get(currentY).get(currentX)) {
             case 0:
@@ -273,10 +269,13 @@ public class Controller {
                 i = -1;
                 j = -1;
                 break;
+            case -1:
+                return res;
+
         }
 
         for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
-            if ((y != 0 || x != 0) && (y != 4 || x != 4) && (y != currentY || x != currentX) && !WasHere(y * 5 + x + 1, stack)) {
+            if ((((y != 0 || x != 0) && (y != 4 || x != 4)) || stack.size() == 24) && (y != currentY || x != currentX) && !WasHere(y * 5 + x + 1, stack)) {
                 res.add(new Point(y, x));
             }
         }
@@ -290,6 +289,8 @@ public class Controller {
             solution.push(y * 5 + x + 1);
             possible.clear();
             HidhlightPosible ();
+        } else if (y == 4 && x == 4 && IsPossible(y, x, possible)) {
+            
         }
     }
 
@@ -362,5 +363,52 @@ public class Controller {
         HidhlightPosible ();
         Cancel.setOnAction(event->ClickCancel());
         Restart.setOnAction(event->ClickRestart());*/
+    }
+
+    private int k = 0;
+
+    void go (Stack<Integer> closed, int a) {
+        closed.push(a);
+        ArrayList<Point> poss = FindPossible(closed);
+
+        if (poss.size() > 0) {
+            for (Point point : poss) {
+                go (closed, point.getY() * 5 + point.getX() + 1);
+            }
+        }
+
+        if (closed.size() == 25) {
+            return;
+        } else {
+            closed.pop();
+            return;
+        }
+    }
+
+    ArrayList<Integer> Answer (Stack<Integer> stack) {
+        Stack<Integer> closed = (Stack<Integer>) stack.clone();
+        ArrayList<Point> poss = FindPossible(closed);
+
+        if (poss != null) {
+            for (Point point : poss) {
+                go (closed, point.getY() * 5 + point.getX() + 1);
+            }
+        }
+
+        if (closed.size() == 25) {
+            return new ArrayList<>(closed);
+        } else {
+            return null;
+        }
+    }
+
+    void ClickHint () {
+        ArrayList<Integer> answer = Answer(solution);
+
+        if (answer != null) {
+            arrows.get((answer.get(solution.size()) - 1) / 5).get((answer.get(solution.size()) - 1) % 5).setStyle("-fx-background-color: blue");
+        } else {
+            Cancel.setStyle("-fx-background-color: blue");
+        }
     }
 }
