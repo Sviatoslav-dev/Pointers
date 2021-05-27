@@ -28,7 +28,6 @@ public class Controller {
     private Button hint;
 
     private ArrayList<ArrayList<Integer>> matrix;
-    private ArrayList<Stack<Integer>> ways;
     private ArrayList<ArrayList<Integer>> directions;
     private ArrayList<ArrayList<Button>> arrows;
     private Stack<Integer> solution;
@@ -49,7 +48,7 @@ public class Controller {
     }
 
     void InputMatrix () {
-        ways = new ArrayList<>();
+        ArrayList<Stack<Integer>> ways = new ArrayList<>();
         Stack<Integer> stack = new Stack<>();
         ArrayList<Point> able = new ArrayList<>();
         matrix = new ArrayList<>();
@@ -140,21 +139,17 @@ public class Controller {
         }
 
         int X, Y;
-        int k;
-
         for (int i = 0; i < 5; i ++) {
             for (int j = 0; j < 5; j++) {
                 X = 100 + j * 40;
                 Y = 200 + i * 40;
 
                 Button but = new Button();
+                but.setStyle("-fx-border-width: 2");
                 but.setLayoutX(X);
                 but.setLayoutY(Y);
-                but.setPrefHeight(40);
-                but.setPrefWidth(40);
-                k = i*5+j + 1;
-                //but.setText(Integer.toString(matrix.get(i).get(j)));
-                but.setId("but" + k);
+                but.setPrefHeight(45);
+                but.setPrefWidth(45);
                 int finalI = i;
                 int finalJ = j;
                 but.setOnAction(event-> ClickArrow (finalI, finalJ));
@@ -237,14 +232,14 @@ public class Controller {
     void HidhlightPosible () {
         possible = FindPossible(solution);
 
-        Cancel.setStyle("-fx-background-color: white");
+        Cancel.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
         MakeAllWhite ();
 
         for (Point point : possible) {
-            arrows.get(point.getY()).get(point.getX()).setStyle("-fx-background-color: green");
+            arrows.get(point.getY()).get(point.getX()).setStyle("-fx-background-color: green; -fx-border-width: 1; -fx-border-color: black");
         }
 
-        arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: yellow");
+        arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: yellow; -fx-border-width: 1; -fx-border-color: black");
     }
 
     ArrayList<Point> FindPossible (Stack<Integer> stack) {
@@ -303,7 +298,7 @@ public class Controller {
 
     void ClickArrow (int y, int x) {
         if ((y != 4 || x != 4) && IsPossible(y, x, possible)) {
-            arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: red");
+            arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
             solution.push(y * 5 + x + 1);
             possible.clear();
             HidhlightPosible ();
@@ -330,7 +325,7 @@ public class Controller {
         for (int i = 0; i < MatrixSize; i++) {
             for (int j = 0; j < MatrixSize; j++) {
                 if (!WasHere (i * 5 + j + 1, solution))
-                    arrows.get(i).get(j).setStyle("-fx-background-color: white");
+                    arrows.get(i).get(j).setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
             }
         }
     }
@@ -424,7 +419,7 @@ public class Controller {
         ArrayList<Integer> answer = Answer(solution);
 
         if (answer != null) {
-            arrows.get((answer.get(solution.size()) - 1) / 5).get((answer.get(solution.size()) - 1) % 5).setStyle("-fx-background-color: blue");
+            arrows.get((answer.get(solution.size()) - 1) / 5).get((answer.get(solution.size()) - 1) % 5).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
         } else {
             Cancel.setStyle("-fx-background-color: blue");
         }
