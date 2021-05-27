@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -38,8 +40,8 @@ public class Controller {
         possible = new ArrayList<>();
         solution.push(1);
         InputMatrix ();
-        create_buttons ();
         InputDirections ();
+        create_buttons ();
         HidhlightPosible ();
         Cancel.setOnAction(event->ClickCancel());
         Restart.setOnAction(event->ClickRestart());
@@ -130,6 +132,8 @@ public class Controller {
 
     void create_buttons () {
         arrows = new ArrayList<>();
+        Image image;
+        image = new Image(getClass().getResourceAsStream("picture.png"));
 
         for (int i = 0; i < 5; i++) {
             arrows.add(new ArrayList<>());
@@ -149,11 +153,25 @@ public class Controller {
                 but.setPrefHeight(40);
                 but.setPrefWidth(40);
                 k = i*5+j + 1;
-                but.setText(Integer.toString(matrix.get(i).get(j)));
+                //but.setText(Integer.toString(matrix.get(i).get(j)));
                 but.setId("but" + k);
                 int finalI = i;
                 int finalJ = j;
                 but.setOnAction(event-> ClickArrow (finalI, finalJ));
+
+                if (i != 4 || j != 4) {
+                    ImageView imageView = new ImageView();
+                    imageView.setImage(image);
+                    imageView.setFitWidth(25);
+                    imageView.setFitHeight(25);
+                    System.out.println(directions.get(i).get(j));
+                    imageView.setRotate(directions.get(i).get(j) * 45 + 90);
+
+                    but.graphicProperty().setValue(imageView);
+                } else {
+                    but.setText(Integer.toString(matrix.get(i).get(j)));
+                }
+
 
                 Pane.getChildren().add(but);
 
