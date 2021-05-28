@@ -23,6 +23,9 @@ public class Controller {
     @FXML
     private Button hint;
 
+    @FXML
+    private Button Clear;
+
     private Field field;
 
     @FXML
@@ -30,6 +33,7 @@ public class Controller {
         Cancel.setOnAction(event->ClickCancel());
         Restart.setOnAction(event->ClickRestart());
         hint.setOnAction(event->ClickHint());
+        Clear.setOnAction(event->ClickClear());
         field = new Field(Pane, Cancel);
     }
 
@@ -70,12 +74,18 @@ public class Controller {
     }
 
     void ClickHint () {
-        ArrayList<Integer> answer = field.Answer(field.solution);
+        if (field.solution.size() != 25) {
+            ArrayList<Integer> answer = field.Answer(field.solution);
 
-        if (answer != null) {
-            field.arrows.get((answer.get(field.solution.size()) - 1) / 5).get((answer.get(field.solution.size()) - 1) % 5).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
-        } else {
-            Cancel.setStyle("-fx-background-color: blue");
+            if (answer != null) {
+                field.arrows.get((answer.get(field.solution.size()) - 1) / 5).get((answer.get(field.solution.size()) - 1) % 5).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
+            } else {
+                Cancel.setStyle("-fx-background-color: blue");
+            }
         }
+    }
+
+    void ClickClear () {
+        field.ClearSolution();
     }
 }

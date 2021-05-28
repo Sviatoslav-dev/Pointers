@@ -1,10 +1,17 @@
 package sample;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -354,7 +361,31 @@ public class Field {
             possible.clear();
             HidhlightPosible ();
         } else if (y == 4 && x == 4 && IsPossible(y, x, possible)) {
+            arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
+            solution.push(y * 5 + x + 1);
+            possible.clear();
+            HidhlightPosible ();
 
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("win_window.fxml"));
+            try {
+                loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Parent root = loader.getRoot();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL);
+            Window primaryStage = pane.getScene().getWindow();
+            stage.initOwner(primaryStage);
+            stage.show();
         }
+    }
+
+    void ClearSolution () {
+        solution.clear();
+        solution.push(1);
+        HidhlightPosible();
     }
 }
