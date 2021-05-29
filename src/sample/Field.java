@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Field {
-    public static final int FieldSize = 5;
+    public static final int FieldSize = 6;
     public static int ArrowsNum;
     private final AnchorPane pane;
     private final Button CancelButton;
