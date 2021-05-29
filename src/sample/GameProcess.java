@@ -5,66 +5,69 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class GameProcess {
-    public Stack<Integer> solution;
-    public ArrayList<Pair> possible;
+    private Stack<Integer> PlayersWay;
+    private ArrayList<Pair> AllowedSteps;
 
-    public Field field;
+    private Field field;
 
     public GameProcess (Field field) {
+        setField(field);
+    }
+
+    public void setField (Field field) {
         this.field = field;
-        solution = new Stack<>();
-        possible = new ArrayList<>();
-        solution.push(1);
+        PlayersWay = new Stack<>();
+        AllowedSteps = new ArrayList<>();
+        PlayersWay.push(1);
         HidhlightPosible ();
 
-        for (int i = 0; i < Field.MatrixSize; i++) {
-            for (int j = 0; j < Field.MatrixSize; j++) {
+        for (int i = 0; i < Field.FieldSize; i++) {
+            for (int j = 0; j < Field.FieldSize; j++) {
                 int finalI = i;
                 int finalJ = j;
-                field.arrows.get(i).get(j).setOnAction(event->ClickArrow(finalI, finalJ));
+                field.getArrow(i, j).setOnAction(event->ClickArrow(finalI, finalJ));
             }
         }
     }
 
     public void HidhlightPosible () {
-        possible = FindPossible(solution);
+        AllowedSteps = FindPossible(PlayersWay);
 
-        field.Cancel.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
+        field.getCancelButton().setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
         MakeAllWhite ();
 
-        for (Pair pair : possible) {
-            field.arrows.get(pair.getY()).get(pair.getX()).setStyle("-fx-background-color: green; -fx-border-width: 1; -fx-border-color: black");
+        for (Pair pair : AllowedSteps) {
+            field.getArrow(pair.getY(), pair.getX()).setStyle("-fx-background-color: green; -fx-border-width: 1; -fx-border-color: black");
         }
 
-        field.arrows.get(field.ArrowY(solution.peek())).get(field.ArrowX(solution.peek())).setStyle("-fx-background-color: yellow; -fx-border-width: 1; -fx-border-color: black");
+        field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: yellow; -fx-border-width: 1; -fx-border-color: black");
     }
 
     void MakeAllWhite () {
-        for (int i = 0; i < Field.MatrixSize; i++) {
-            for (int j = 0; j < Field.MatrixSize; j++) {
-                if (WasHere(i * Field.MatrixSize + j + 1, solution))
-                    field.arrows.get(i).get(j).setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
+        for (int i = 0; i < Field.FieldSize; i++) {
+            for (int j = 0; j < Field.FieldSize; j++) {
+                if (WasHere(i * Field.FieldSize + j + 1, PlayersWay))
+                    field.getArrow(i, j).setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
             }
         }
     }
 
-    void ClickArrow (int y, int x) {
-        if ((y != Field.MatrixSize - 1 || x != Field.MatrixSize - 1) && IsPossible(y, x, possible)) {
-            field.arrows.get(field.ArrowY(solution.peek())).get(field.ArrowX(solution.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
-            solution.push(field.ArrowNum(y, x));
-            possible.clear();
+    void ClickArrow (int i, int j) {
+        if ((i != Field.FieldSize - 1 || j != Field.FieldSize - 1) && IsPossible(i, j, AllowedSteps)) {
+            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
+            PlayersWay.push(field.ArrowNum(i, j));
+            AllowedSteps.clear();
             HidhlightPosible ();
-        } else if (y == Field.MatrixSize - 1 && x == Field.MatrixSize - 1 && IsPossible(y, x, possible)) {
-            field.arrows.get(field.ArrowY(solution.peek())).get(field.ArrowX(solution.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
-            solution.push(field.ArrowNum(y, x));
-            possible.clear();
+        } else if (i == Field.FieldSize - 1 && j == Field.FieldSize - 1 && IsPossible(i, j, AllowedSteps)) {
+            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
+            PlayersWay.push(field.ArrowNum(i, j));
+            AllowedSteps.clear();
             HidhlightPosible ();
 
             FXMLLoader loader = new FXMLLoader();
@@ -78,17 +81,17 @@ public class GameProcess {
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
-            Window primaryStage = field.pane.getScene().getWindow();
-            stage.initOwner(primaryStage);
+            stage.initOwner(field.getPane().getScene().getWindow());
+            stage.setOnHidden(event->Restart());
             stage.show();
         }
     }
 
-    boolean IsPossible (int y, int x, ArrayList<Pair> poss) {
+    boolean IsPossible (int i, int j, ArrayList<Pair> allowed) {
         boolean res = false;
 
-        for (Pair pair : poss) {
-            if (pair.getY() == y && pair.getX() == x) {
+        for (Pair pair : allowed) {
+            if (pair.getY() == i && pair.getX() == j) {
                 res = true;
                 break;
             }
@@ -98,19 +101,19 @@ public class GameProcess {
     }
 
     void ClearSolution () {
-        solution.clear();
-        solution.push(1);
+        PlayersWay.clear();
+        PlayersWay.push(1);
         HidhlightPosible();
     }
 
-    ArrayList<Pair> FindPossible (Stack<Integer> stack) {
+    ArrayList<Pair> FindPossible (Stack<Integer> way) {
         ArrayList<Pair> res = new ArrayList<>();
         int i = 0, j = 0;
 
-        int currentY = field.ArrowY(stack.peek());
-        int currentX = field.ArrowX(stack.peek());
+        int currentY = field.ArrowY(way.peek());
+        int currentX = field.ArrowX(way.peek());
 
-        switch (field.directions.get(currentY).get(currentX)) {
+        switch (field.getDirection(currentY, currentX)) {
             case 0:
                 i = 0;
                 j = -1;
@@ -147,8 +150,8 @@ public class GameProcess {
                 return res;
         }
 
-        for (int y = currentY, x = currentX; x < Field.MatrixSize && x >= 0 && y >= 0 && y < Field.MatrixSize; x += i, y += j) {
-            if ((((y != 0 || x != 0) && (y != Field.MatrixSize - 1 || x != Field.MatrixSize - 1)) || stack.size() == Field.MatrixSizeSquared - 1) && (y != currentY || x != currentX) && WasHere(field.ArrowNum(y, x), stack)) {
+        for (int y = currentY, x = currentX; x < Field.FieldSize && x >= 0 && y >= 0 && y < Field.FieldSize; x += i, y += j) {
+            if ((((y != 0 || x != 0) && (y != Field.FieldSize - 1 || x != Field.FieldSize - 1)) || way.size() == Field.ArrowsNum - 1) && (y != currentY || x != currentX) && WasHere(field.ArrowNum(y, x), way)) {
                 res.add(new Pair(y, x));
             }
         }
@@ -156,47 +159,74 @@ public class GameProcess {
         return res;
     }
 
-    boolean WasHere (int n, Stack<Integer> closed) {
+    boolean WasHere (int step, Stack<Integer> way) {
         boolean res = false;
-        Stack<Integer> way = (Stack<Integer>) closed.clone();
+        Stack<Integer> WayCopy = (Stack<Integer>) way.clone();
 
-        while (way.size() > 0) {
-            if (way.peek() == n)
+        while (WayCopy.size() > 0) {
+            if (WayCopy.peek() == step)
                 res = true;
-            way.pop();
+            WayCopy.pop();
         }
         return !res;
     }
 
-    void go (Stack<Integer> closed, int a) {
-        closed.push(a);
-        ArrayList<Pair> poss = FindPossible(closed);
+    void go (Stack<Integer> AnswerWay, int step) {
+        AnswerWay.push(step);
+        ArrayList<Pair> poss = FindPossible(AnswerWay);
 
         if (poss.size() > 0) {
             for (Pair pair : poss) {
-                go (closed, field.ArrowNum(pair.getY(), pair.getX()));
+                go (AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
             }
         }
 
-        if (closed.size() != Field.MatrixSizeSquared) {
-            closed.pop();
+        if (AnswerWay.size() != Field.ArrowsNum) {
+            AnswerWay.pop();
         }
     }
 
-    ArrayList<Integer> Answer (Stack<Integer> stack) {
-        Stack<Integer> closed = (Stack<Integer>) stack.clone();
-        ArrayList<Pair> poss = FindPossible(closed);
+    ArrayList<Integer> Answer (Stack<Integer> way) {
+        Stack<Integer> AnswerWay = (Stack<Integer>) way.clone();
+        ArrayList<Pair> allowed = FindPossible(AnswerWay);
 
-        if (poss != null) {
-            for (Pair pair : poss) {
-                go (closed, field.ArrowNum(pair.getY(), pair.getX()));
+        if (allowed != null) {
+            for (Pair pair : allowed) {
+                go (AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
             }
         }
 
-        if (closed.size() == Field.MatrixSizeSquared) {
-            return new ArrayList<>(closed);
+        if (AnswerWay.size() == Field.ArrowsNum) {
+            return new ArrayList<>(AnswerWay);
         } else {
             return null;
+        }
+    }
+
+    ArrayList<Integer> Answer () {
+        return Answer(PlayersWay);
+    }
+
+    void Restart () {
+        setField(new Field(field.getPane(), field.getCancelButton()));
+    }
+
+    void CancelStep () {
+        if (PlayersWay.size() > 1) {
+            PlayersWay.pop();
+            AllowedSteps.clear();
+            HidhlightPosible();
+        }
+    }
+
+    void hint () {
+        if (PlayersWay.size() != Field.ArrowsNum) {
+            ArrayList<Integer> answer = Answer();
+            if (answer != null) {
+                field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
+            } else {
+                field.getCancelButton().setStyle("-fx-background-color: blue");
+            }
         }
     }
 }

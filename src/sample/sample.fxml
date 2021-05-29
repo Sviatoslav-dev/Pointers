@@ -10,11 +10,12 @@
     <rowConstraints>
         <RowConstraints />
     </rowConstraints>
-    <AnchorPane fx:id="Pane" prefHeight="600.0" prefWidth="400.0">
+    <AnchorPane id="anchorpane" prefHeight="600.0" prefWidth="400.0">
       <children>
          <Button fx:id="Cancel" layoutX="271.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="38.0" text="&lt;-" />
          <Button fx:id="Restart" layoutX="23.0" layoutY="14.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Restart" />
          <Button fx:id="hint" layoutX="328.0" layoutY="14.0" mnemonicParsing="false" text="Hint" />
          <Button fx:id="Clear" layoutX="14.0" layoutY="49.0" mnemonicParsing="false" text="Clear answer" />
+         <AnchorPane fx:id="Pane" layoutX="1.0" layoutY="88.0" prefHeight="513.0" prefWidth="400.0" />
       </children></AnchorPane>
 </GridPane>
