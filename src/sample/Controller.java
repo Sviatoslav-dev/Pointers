@@ -27,6 +27,7 @@ public class Controller {
     private Button Clear;
 
     private Field field;
+    private GameProcess gp;
 
     @FXML
     void initialize() {
@@ -35,13 +36,14 @@ public class Controller {
         hint.setOnAction(event->ClickHint());
         Clear.setOnAction(event->ClickClear());
         field = new Field(Pane, Cancel);
+        gp = new GameProcess(field);
     }
 
     void ClickCancel () {
-        if (field.solution.size() > 1) {
-            field.solution.pop();
-            field.possible.clear();
-            field.HidhlightPosible();
+        if (gp.solution.size() > 1) {
+            gp.solution.pop();
+            gp.possible.clear();
+            gp.HidhlightPosible();
         }
     }
 
@@ -74,11 +76,11 @@ public class Controller {
     }
 
     void ClickHint () {
-        if (field.solution.size() != 25) {
-            ArrayList<Integer> answer = field.Answer(field.solution);
+        if (gp.solution.size() != 25) {
+            ArrayList<Integer> answer = gp.Answer(gp.solution);
 
             if (answer != null) {
-                field.arrows.get((answer.get(field.solution.size()) - 1) / 5).get((answer.get(field.solution.size()) - 1) % 5).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
+                field.arrows.get((answer.get(gp.solution.size()) - 1) / 5).get((answer.get(gp.solution.size()) - 1) % 5).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
             } else {
                 Cancel.setStyle("-fx-background-color: blue");
             }
@@ -86,6 +88,6 @@ public class Controller {
     }
 
     void ClickClear () {
-        field.ClearSolution();
+        gp.ClearSolution();
     }
 }
