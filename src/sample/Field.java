@@ -24,7 +24,7 @@ public class Field {
     private ArrayList<ArrayList<Integer>> directions;
     public ArrayList<ArrayList<Button>> arrows;
     public Stack<Integer> solution;
-    public ArrayList<Point> possible;
+    public ArrayList<Pair> possible;
 
     public Field (AnchorPane pane, Button Cancel) {
         this.pane = pane;
@@ -41,7 +41,7 @@ public class Field {
     void InputMatrix () {
         ArrayList<Stack<Integer>> ways = new ArrayList<>();
         Stack<Integer> stack = new Stack<>();
-        ArrayList<Point> able = new ArrayList<>();
+        ArrayList<Pair> able = new ArrayList<>();
         matrix = new ArrayList<>();
         for (int i = 0; i < MatrixSize; i++) {
             matrix.add(new ArrayList<>());
@@ -65,9 +65,9 @@ public class Field {
                     if (i != 0 || j != 0) {
                         for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
                             if (matrix.get(y).get(x) == 0 && !HaveWay(stack, y * 5 + x + 1, ways)) {
-                                able.add(new Point(y, x));
+                                able.add(new Pair(y, x));
                             } else if (matrix.get(y).get(x) == 25 && stack.size() == 24) {
-                                able.add(new Point(y, x));
+                                able.add(new Pair(y, x));
                             }
                         }
                     }
@@ -182,34 +182,37 @@ public class Field {
                         y1 = n;
                         x1 = k;
                     }
-
                     if (matrix.get(n).get(k) == i + 1) {
                         y2 = n;
                         x2 = k;
                     }
-
                 }
             }
 
-            if (y2 < y1 && x2 < x1) {
-                directions.get(y1).set(x1, 7);
-            } else if (y2 < y1 && x2 == x1) {
-                directions.get(y1).set(x1, 0);
-            } else if (y2 < y1) {
-                directions.get(y1).set(x1, 1);
-            } else if (y2 == y1 && x2 < x1) {
-                directions.get(y1).set(x1, 6);
-            } else if (y2 == y1 && x2 > x1) {
-                directions.get(y1).set(x1, 2);
-            } else if (y2 > y1 && x2 < x1) {
-                directions.get(y1).set(x1, 5);
-            } else if (y2 > y1 && x2 == x1) {
-                directions.get(y1).set(x1, 4);
-            } else if (y2 > y1) {
-                directions.get(y1).set(x1, 3);
-            }
+            directions.get(y1).set(x1, DirectionNum (y1, y2, x1, x2));
         }
         PrintMatrix(directions);
+    }
+
+    int DirectionNum (int y1, int y2, int x1, int x2) {
+        if (y2 < y1 && x2 < x1) {
+            return 7;
+        } else if (y2 < y1 && x2 == x1) {
+            return 0;
+        } else if (y2 < y1) {
+            return 1;
+        } else if (y2 == y1 && x2 < x1) {
+            return 6;
+        } else if (y2 == y1 && x2 > x1) {
+            return 2;
+        } else if (y2 > y1 && x2 < x1) {
+            return 5;
+        } else if (y2 > y1 && x2 == x1) {
+            return 4;
+        } else if (y2 > y1) {
+            return 3;
+        }
+        return -1;
     }
 
     void PrintMatrix (ArrayList<ArrayList<Integer>> M) {
@@ -224,16 +227,16 @@ public class Field {
         Cancel.setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
         MakeAllWhite ();
 
-        for (Point point : possible) {
-            arrows.get(point.getY()).get(point.getX()).setStyle("-fx-background-color: green; -fx-border-width: 1; -fx-border-color: black");
+        for (Pair pair : possible) {
+            arrows.get(pair.getY()).get(pair.getX()).setStyle("-fx-background-color: green; -fx-border-width: 1; -fx-border-color: black");
         }
 
         arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: yellow; -fx-border-width: 1; -fx-border-color: black");
     }
 
-    ArrayList<Point> FindPossible (Stack<Integer> stack) {
-        ArrayList<Point> res = new ArrayList<>();
-        int i = 0, j = 0;
+    ArrayList<Pair> FindPossible (Stack<Integer> stack) {
+        ArrayList<Pair> res = new ArrayList<>();
+        Integer i = 0, j = 0;
 
         int currentY = (stack.peek() - 1) / 5;
         int currentX = (stack.peek() - 1) % 5;
@@ -273,26 +276,23 @@ public class Field {
                 break;
             case -1:
                 return res;
-
         }
 
         for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
             if ((((y != 0 || x != 0) && (y != 4 || x != 4)) || stack.size() == 24) && (y != currentY || x != currentX) && WasHere(y * 5 + x + 1, stack)) {
-                res.add(new Point(y, x));
+                res.add(new Pair(y, x));
             }
         }
 
         return res;
     }
 
-
-
-    boolean IsPossible (int y, int x, ArrayList<Point> poss) {
+    boolean IsPossible (int y, int x, ArrayList<Pair> poss) {
 
         boolean res = false;
 
-        for (Point point : poss) {
-            if (point.getY() == y && point.getX() == x) {
+        for (Pair pair : poss) {
+            if (pair.getY() == y && pair.getX() == x) {
                 res = true;
                 break;
             }
@@ -324,11 +324,11 @@ public class Field {
 
     void go (Stack<Integer> closed, int a) {
         closed.push(a);
-        ArrayList<Point> poss = FindPossible(closed);
+        ArrayList<Pair> poss = FindPossible(closed);
 
         if (poss.size() > 0) {
-            for (Point point : poss) {
-                go (closed, point.getY() * 5 + point.getX() + 1);
+            for (Pair pair : poss) {
+                go (closed, pair.getY() * 5 + pair.getX() + 1);
             }
         }
 
@@ -339,11 +339,11 @@ public class Field {
 
     ArrayList<Integer> Answer (Stack<Integer> stack) {
         Stack<Integer> closed = (Stack<Integer>) stack.clone();
-        ArrayList<Point> poss = FindPossible(closed);
+        ArrayList<Pair> poss = FindPossible(closed);
 
         if (poss != null) {
-            for (Point point : poss) {
-                go (closed, point.getY() * 5 + point.getX() + 1);
+            for (Pair pair : poss) {
+                go (closed, pair.getY() * 5 + pair.getX() + 1);
             }
         }
 

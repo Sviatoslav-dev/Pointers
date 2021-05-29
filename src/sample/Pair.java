@@ -1,10 +1,10 @@
 package sample;
 
-public class Point {
+public class Pair {
     private final int y;
     private final int x;
 
-    Point (int y, int x) {
+    Pair(int y, int x) {
         this.x = x;
         this.y = y;
     }
