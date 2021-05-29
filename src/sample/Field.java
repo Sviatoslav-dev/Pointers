@@ -16,8 +16,10 @@ public class Field {
     private ArrayList<ArrayList<Integer>> matrix;
     public ArrayList<ArrayList<Integer>> directions;
     public ArrayList<ArrayList<Button>> arrows;
+    public static int MatrixSizeSquared;
 
     public Field (AnchorPane pane, Button Cancel) {
+        MatrixSizeSquared = MatrixSize * MatrixSize;
         this.pane = pane;
         this.Cancel = Cancel;
         InputMatrix ();
@@ -42,18 +44,18 @@ public class Field {
         int currentNum = 1;
 
         matrix.get(0).set(0, 1);
-        matrix.get(4).set(4, 25);
+        matrix.get(MatrixSize - 1).set(MatrixSize - 1, MatrixSizeSquared);
 
         stack.push(1);
 
-        while (currentNum != 25) {
+        while (currentNum != MatrixSizeSquared) {
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
                     if (i != 0 || j != 0) {
-                        for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
-                            if (matrix.get(y).get(x) == 0 && !HaveWay(stack, y * 5 + x + 1, ways)) {
+                        for (int y = currentY, x = currentX; x < MatrixSize && x >= 0 && y >= 0 && y < MatrixSize; x += i, y += j) {
+                            if (matrix.get(y).get(x) == 0 && !HaveWay(stack, ArrowNum(y, x), ways)) {
                                 able.add(new Pair(y, x));
-                            } else if (matrix.get(y).get(x) == 25 && stack.size() == 24) {
+                            } else if (matrix.get(y).get(x) == MatrixSizeSquared && stack.size() == MatrixSizeSquared - 1) {
                                 able.add(new Pair(y, x));
                             }
                         }
@@ -68,7 +70,7 @@ public class Field {
                 currentY = able.get(rand).getY();
 
                 currentNum++;
-                stack.push(currentY * 5 + currentX + 1);
+                stack.push(ArrowNum(currentY, currentX));
 
                 System.out.println(stack);
 
@@ -83,8 +85,8 @@ public class Field {
 
                 matrix.get(currentY).set(currentX, 0);
 
-                currentY = (stack.peek() - 1) / 5;
-                currentX = (stack.peek() - 1) % 5;
+                currentY = ArrowY(stack.peek());
+                currentX = ArrowX(stack.peek());
                 currentNum--;
             }
         }
@@ -110,13 +112,13 @@ public class Field {
         Image image;
         image = new Image(getClass().getResourceAsStream("picture.png"));
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < MatrixSize; i++) {
             arrows.add(new ArrayList<>());
         }
 
         int X, Y;
-        for (int i = 0; i < 5; i ++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < MatrixSize; i ++) {
+            for (int j = 0; j < MatrixSize; j++) {
                 X = 100 + j * 40;
                 Y = 200 + i * 40;
 
@@ -127,7 +129,7 @@ public class Field {
                 but.setPrefHeight(45);
                 but.setPrefWidth(45);
 
-                if (i != 4 || j != 4) {
+                if (i != MatrixSize - 1 || j != MatrixSize - 1) {
                     ImageView imageView = new ImageView();
                     imageView.setImage(image);
                     imageView.setFitWidth(25);
@@ -159,9 +161,9 @@ public class Field {
             }
         }
 
-        for (int i = 1; i < 25; i++) {
-            for (int n = 0; n < 5; n++) {
-                for (int k = 0; k < 5; k++) {
+        for (int i = 1; i < MatrixSizeSquared; i++) {
+            for (int n = 0; n < MatrixSize; n++) {
+                for (int k = 0; k < MatrixSize; k++) {
                     if (matrix.get(n).get(k) == i) {
                         y1 = n;
                         x1 = k;
@@ -175,7 +177,6 @@ public class Field {
 
             directions.get(y1).set(x1, DirectionNum (y1, y2, x1, x2));
         }
-        PrintMatrix(directions);
     }
 
     int DirectionNum (int y1, int y2, int x1, int x2) {
@@ -199,9 +200,15 @@ public class Field {
         return -1;
     }
 
-    void PrintMatrix (ArrayList<ArrayList<Integer>> M) {
-        for (ArrayList<Integer> integers : M) {
-            System.out.println(integers);
-        }
+    int ArrowNum (int i, int j) {
+        return i * MatrixSize + j + 1;
+    }
+
+    int ArrowY (int n) {
+        return (n - 1) / MatrixSize;
+    }
+
+    int ArrowX (int n) {
+        return (n - 1) % MatrixSize;
     }
 }

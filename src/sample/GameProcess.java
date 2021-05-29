@@ -43,27 +43,27 @@ public class GameProcess {
             field.arrows.get(pair.getY()).get(pair.getX()).setStyle("-fx-background-color: green; -fx-border-width: 1; -fx-border-color: black");
         }
 
-        field.arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: yellow; -fx-border-width: 1; -fx-border-color: black");
+        field.arrows.get(field.ArrowY(solution.peek())).get(field.ArrowX(solution.peek())).setStyle("-fx-background-color: yellow; -fx-border-width: 1; -fx-border-color: black");
     }
 
     void MakeAllWhite () {
         for (int i = 0; i < Field.MatrixSize; i++) {
             for (int j = 0; j < Field.MatrixSize; j++) {
-                if (WasHere(i * 5 + j + 1, solution))
+                if (WasHere(i * Field.MatrixSize + j + 1, solution))
                     field.arrows.get(i).get(j).setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
             }
         }
     }
 
     void ClickArrow (int y, int x) {
-        if ((y != 4 || x != 4) && IsPossible(y, x, possible)) {
-            field.arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
-            solution.push(y * 5 + x + 1);
+        if ((y != Field.MatrixSize - 1 || x != Field.MatrixSize - 1) && IsPossible(y, x, possible)) {
+            field.arrows.get(field.ArrowY(solution.peek())).get(field.ArrowX(solution.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
+            solution.push(field.ArrowNum(y, x));
             possible.clear();
             HidhlightPosible ();
-        } else if (y == 4 && x == 4 && IsPossible(y, x, possible)) {
-            field.arrows.get((solution.peek() - 1) / 5).get((solution.peek() - 1) % 5).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
-            solution.push(y * 5 + x + 1);
+        } else if (y == Field.MatrixSize - 1 && x == Field.MatrixSize - 1 && IsPossible(y, x, possible)) {
+            field.arrows.get(field.ArrowY(solution.peek())).get(field.ArrowX(solution.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
+            solution.push(field.ArrowNum(y, x));
             possible.clear();
             HidhlightPosible ();
 
@@ -107,8 +107,8 @@ public class GameProcess {
         ArrayList<Pair> res = new ArrayList<>();
         int i = 0, j = 0;
 
-        int currentY = (stack.peek() - 1) / 5;
-        int currentX = (stack.peek() - 1) % 5;
+        int currentY = field.ArrowY(stack.peek());
+        int currentX = field.ArrowX(stack.peek());
 
         switch (field.directions.get(currentY).get(currentX)) {
             case 0:
@@ -147,8 +147,8 @@ public class GameProcess {
                 return res;
         }
 
-        for (int y = currentY, x = currentX; x < 5 && x >= 0 && y >= 0 && y < 5; x += i, y += j) {
-            if ((((y != 0 || x != 0) && (y != 4 || x != 4)) || stack.size() == 24) && (y != currentY || x != currentX) && WasHere(y * 5 + x + 1, stack)) {
+        for (int y = currentY, x = currentX; x < Field.MatrixSize && x >= 0 && y >= 0 && y < Field.MatrixSize; x += i, y += j) {
+            if ((((y != 0 || x != 0) && (y != Field.MatrixSize - 1 || x != Field.MatrixSize - 1)) || stack.size() == Field.MatrixSizeSquared - 1) && (y != currentY || x != currentX) && WasHere(field.ArrowNum(y, x), stack)) {
                 res.add(new Pair(y, x));
             }
         }
@@ -174,11 +174,11 @@ public class GameProcess {
 
         if (poss.size() > 0) {
             for (Pair pair : poss) {
-                go (closed, pair.getY() * 5 + pair.getX() + 1);
+                go (closed, field.ArrowNum(pair.getY(), pair.getX()));
             }
         }
 
-        if (closed.size() != 25) {
+        if (closed.size() != Field.MatrixSizeSquared) {
             closed.pop();
         }
     }
@@ -189,11 +189,11 @@ public class GameProcess {
 
         if (poss != null) {
             for (Pair pair : poss) {
-                go (closed, pair.getY() * 5 + pair.getX() + 1);
+                go (closed, field.ArrowNum(pair.getY(), pair.getX()));
             }
         }
 
-        if (closed.size() == 25) {
+        if (closed.size() == Field.MatrixSizeSquared) {
             return new ArrayList<>(closed);
         } else {
             return null;

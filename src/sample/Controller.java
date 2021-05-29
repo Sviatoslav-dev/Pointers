@@ -76,11 +76,11 @@ public class Controller {
     }
 
     void ClickHint () {
-        if (gp.solution.size() != 25) {
+        if (gp.solution.size() != Field.MatrixSizeSquared) {
             ArrayList<Integer> answer = gp.Answer(gp.solution);
 
             if (answer != null) {
-                field.arrows.get((answer.get(gp.solution.size()) - 1) / 5).get((answer.get(gp.solution.size()) - 1) % 5).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
+                field.arrows.get(field.ArrowY(answer.get(gp.solution.size()))).get(field.ArrowX(answer.get(gp.solution.size()))).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
             } else {
                 Cancel.setStyle("-fx-background-color: blue");
             }
