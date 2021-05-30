@@ -14,21 +14,21 @@
     </rowConstraints>
     <AnchorPane id="anchorpane" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #34495e;">
       <children>
-         <Button fx:id="Restart" layoutX="14.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="105.0" style="-fx-background-color: #ecf0f1;" text="Restart" textAlignment="CENTER" textFill="#2c3e50">
+         <Button fx:id="NewFieldButton" layoutX="7.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="122.0" style="-fx-background-color: #ecf0f1;" text="New Field" textAlignment="CENTER" textFill="#2c3e50">
             <font>
                <Font name="System Bold" size="17.0" />
             </font>
             <cursor>
                <Cursor fx:constant="HAND" />
             </cursor></Button>
-         <Button fx:id="hint" layoutX="312.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="72.0" style="-fx-background-color: #ecf0f1;" text="Hint" textFill="#2c3e50">
+         <Button fx:id="HintButton" layoutX="315.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="72.0" style="-fx-background-color: #ecf0f1;" text="Hint" textFill="#2c3e50">
             <font>
                <Font name="System Bold" size="17.0" />
             </font>
             <cursor>
                <Cursor fx:constant="HAND" />
             </cursor></Button>
-         <Button fx:id="Clear" layoutX="127.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="85.0" style="-fx-background-color: #ecf0f1;" text="Clear" textFill="#2c3e50">
+         <Button fx:id="ClearButton" layoutX="138.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="85.0" style="-fx-background-color: #ecf0f1;" text="Clear" textFill="#2c3e50">
             <font>
                <Font name="System Bold" size="17.0" />
             </font>
@@ -43,7 +43,7 @@
                   </font>
                </Label>
             </children></AnchorPane>
-         <Button fx:id="Cancel" layoutX="222.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="79.0" style="-fx-background-color: #ecf0f1;" text="Undo" textFill="#2c3e50">
+         <Button fx:id="UndoButton" layoutX="230.0" layoutY="11.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="79.0" style="-fx-background-color: #ecf0f1;" text="Undo" textFill="#2c3e50">
             <font>
                <Font name="System Bold" size="17.0" />
             </font>

@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
@@ -16,21 +15,20 @@ import java.util.Stack;
 public class GameProcess {
     private Stack<Integer> PlayersWay;
     private ArrayList<Pair> AllowedSteps;
-    private Button CancelButton;
-
+    private Button UndoButton;
     private Field field;
 
-    public GameProcess (Field field, Button CancelButton) {
-        setField(field, CancelButton);
+    public GameProcess (Field field, Button UndoButton) {
+        setField(field, UndoButton);
     }
 
     public void setField (Field field, Button CancelButton) {
         this.field = field;
-        this.CancelButton = CancelButton;
+        this.UndoButton = CancelButton;
         PlayersWay = new Stack<>();
         AllowedSteps = new ArrayList<>();
         PlayersWay.push(1);
-        HidhlightPosible ();
+        HighlightAllowed();
 
         for (int i = 0; i < Field.FieldSize; i++) {
             for (int j = 0; j < Field.FieldSize; j++) {
@@ -41,10 +39,8 @@ public class GameProcess {
         }
     }
 
-    public void HidhlightPosible () {
-        AllowedSteps = FindPossible(PlayersWay);
-
-        CancelButton.setStyle("-fx-background-color: #ecf0f1");
+    public void HighlightAllowed() {
+        AllowedSteps = FindAllowed(PlayersWay);
 
         MakeAllWhite ();
 
@@ -57,6 +53,8 @@ public class GameProcess {
     }
 
     void MakeAllWhite () {
+        UndoButton.setStyle("-fx-background-color: #ecf0f1");
+
         for (int i = 0; i < Field.FieldSize; i++) {
             for (int j = 0; j < Field.FieldSize; j++) {
                 if (WasHere(i * Field.FieldSize + j + 1, PlayersWay))
@@ -67,35 +65,36 @@ public class GameProcess {
     }
 
     void ClickArrow (int i, int j) {
-        if ((i != Field.FieldSize - 1 || j != Field.FieldSize - 1) && IsPossible(i, j, AllowedSteps)) {
+        if (IsAllowed(i, j, AllowedSteps)) {
             field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #f1c40f");
             PlayersWay.push(field.ArrowNum(i, j));
             AllowedSteps.clear();
-            HidhlightPosible ();
-        } else if (i == Field.FieldSize - 1 && j == Field.FieldSize - 1 && IsPossible(i, j, AllowedSteps)) {
-            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #f1c40f");
-            PlayersWay.push(field.ArrowNum(i, j));
-            AllowedSteps.clear();
-            HidhlightPosible ();
+            HighlightAllowed();
 
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("win_window.fxml"));
-            try {
-                loader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (i == Field.FieldSize - 1 && j == Field.FieldSize - 1) {
+                LoadWinWindow ();
             }
-            Parent root = loader.getRoot();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(field.getPane().getScene().getWindow());
-            stage.setOnHidden(event->Restart());
-            stage.show();
         }
     }
 
-    boolean IsPossible (int i, int j, ArrayList<Pair> allowed) {
+    void LoadWinWindow () {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("win_window.fxml"));
+        try {
+            loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Parent root = loader.getRoot();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(field.getPane().getScene().getWindow());
+        stage.setOnHidden(event-> NewField());
+        stage.show();
+    }
+
+    boolean IsAllowed(int i, int j, ArrayList<Pair> allowed) {
         boolean res = false;
 
         for (Pair pair : allowed) {
@@ -108,13 +107,13 @@ public class GameProcess {
         return res;
     }
 
-    void ClearSolution () {
+    void ClearPlayersWay() {
         PlayersWay.clear();
         PlayersWay.push(1);
-        HidhlightPosible();
+        HighlightAllowed();
     }
 
-    ArrayList<Pair> FindPossible (Stack<Integer> way) {
+    ArrayList<Pair> FindAllowed (Stack<Integer> way) {
         ArrayList<Pair> res = new ArrayList<>();
         int i = 0, j = 0;
 
@@ -179,13 +178,13 @@ public class GameProcess {
         return !res;
     }
 
-    void go (Stack<Integer> AnswerWay, int step) {
+    void Bypass (Stack<Integer> AnswerWay, int step) {
         AnswerWay.push(step);
-        ArrayList<Pair> poss = FindPossible(AnswerWay);
+        ArrayList<Pair> poss = FindAllowed(AnswerWay);
 
         if (poss.size() > 0) {
             for (Pair pair : poss) {
-                go (AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
+                Bypass(AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
             }
         }
 
@@ -194,13 +193,13 @@ public class GameProcess {
         }
     }
 
-    ArrayList<Integer> Answer (Stack<Integer> way) {
+    ArrayList<Integer> FindAnswer(Stack<Integer> way) {
         Stack<Integer> AnswerWay = (Stack<Integer>) way.clone();
-        ArrayList<Pair> allowed = FindPossible(AnswerWay);
+        ArrayList<Pair> allowed = FindAllowed(AnswerWay);
 
         if (allowed != null) {
             for (Pair pair : allowed) {
-                go (AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
+                Bypass(AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
             }
         }
 
@@ -211,29 +210,29 @@ public class GameProcess {
         }
     }
 
-    ArrayList<Integer> Answer () {
-        return Answer(PlayersWay);
+    ArrayList<Integer> FindAnswer() {
+        return FindAnswer(PlayersWay);
     }
 
-    void Restart () {
-        setField(new Field(field.getPane()), CancelButton);
+    void NewField () {
+        setField(new Field(field.getPane()), UndoButton);
     }
 
-    void CancelStep () {
+    void Undo () {
         if (PlayersWay.size() > 1) {
             PlayersWay.pop();
             AllowedSteps.clear();
-            HidhlightPosible();
+            HighlightAllowed();
         }
     }
 
     void hint () {
         if (PlayersWay.size() != Field.ArrowsNum) {
-            ArrayList<Integer> answer = Answer();
+            ArrayList<Integer> answer = FindAnswer();
             if (answer != null) {
                 field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: #2980b9");
             } else {
-                CancelButton.setStyle("-fx-background-color: #2980b9");
+                UndoButton.setStyle("-fx-background-color: #2980b9");
             }
         }
     }
