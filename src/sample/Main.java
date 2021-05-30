@@ -13,6 +13,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("game_window.fxml"));
         primaryStage.setTitle("Pointers");
         primaryStage.setScene(new Scene(root, 400, 600));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

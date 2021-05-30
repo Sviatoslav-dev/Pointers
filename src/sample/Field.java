@@ -24,7 +24,7 @@ public class Field {
         create_buttons ();
     }
 
-    ArrayList<ArrayList<Integer>> InputStartWay() {
+    private ArrayList<ArrayList<Integer>> InputStartWay() {
         ArrayList<Stack<Integer>> ways = new ArrayList<>();
         Stack<Integer> way = new Stack<>();
         ArrayList<Pair> able = new ArrayList<>();
@@ -90,7 +90,7 @@ public class Field {
         return StartWay;
     }
 
-    boolean isDeadEnd (Stack<Integer> way, int step, ArrayList<Stack<Integer>> DeadEnds) {
+    private boolean isDeadEnd (Stack<Integer> way, int step, ArrayList<Stack<Integer>> DeadEnds) {
         boolean res = false;
         Stack<Integer> WayCopy = (Stack<Integer>) way.clone();
         WayCopy.push(step);
@@ -105,7 +105,7 @@ public class Field {
         return res;
     }
 
-    void create_buttons () {
+    private void create_buttons () {
         arrows = new ArrayList<>();
         Image ArrowImage;
         ArrowImage = new Image(getClass().getResourceAsStream("arrow.png"));
@@ -148,7 +148,7 @@ public class Field {
         }
     }
 
-    void InputDirections (ArrayList<ArrayList<Integer>> StartWay) {
+    private void InputDirections (ArrayList<ArrayList<Integer>> StartWay) {
         int y1 = 0, y2 = 0, x1 = 0, x2 = 0;
 
         directions = new ArrayList<>();
@@ -176,7 +176,7 @@ public class Field {
         }
     }
 
-    int CalculateDirection(int y1, int y2, int x1, int x2) {
+    private int CalculateDirection(int y1, int y2, int x1, int x2) {
         if (y2 < y1 && x2 < x1) {
             return 7;
         } else if (y2 < y1 && x2 == x1) {
@@ -197,27 +197,27 @@ public class Field {
         return -1;
     }
 
-    int ArrowNum (int i, int j) {
+    public int ArrowNum (int i, int j) {
         return i * FieldSize + j + 1;
     }
 
-    int ArrowY (int n) {
+    public int ArrowY (int n) {
         return (n - 1) / FieldSize;
     }
 
-    int ArrowX (int n) {
+    public int ArrowX (int n) {
         return (n - 1) % FieldSize;
     }
 
-    AnchorPane getPane () {
+    public AnchorPane getPane () {
         return pane;
     }
 
-    int getDirection (int i, int j) {
+    public int getDirection (int i, int j) {
         return directions.get(i).get(j);
     }
 
-    Button getArrow (int i, int j) {
+    public Button getArrow (int i, int j) {
         return arrows.get(i).get(j);
     }
 }

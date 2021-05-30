@@ -12,7 +12,7 @@
             <Font name="System Bold Italic" size="31.0" />
          </font>
       </Label>
-      <Button fx:id="PlayAgain" layoutX="53.0" layoutY="115.0" mnemonicParsing="false" style="-fx-background-color: #ecf0f1;" text="Play again">
+      <Button fx:id="PlayAgainButton" layoutX="53.0" layoutY="115.0" mnemonicParsing="false" style="-fx-background-color: #ecf0f1;" text="Play again">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>

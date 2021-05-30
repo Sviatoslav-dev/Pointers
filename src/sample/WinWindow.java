@@ -4,15 +4,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 public class WinWindow {
+
     @FXML
-    private Button PlayAgain;
+    private Button PlayAgainButton;
 
     @FXML
     void initialize() {
-        PlayAgain.setOnAction(event->again());
+        PlayAgainButton.setOnAction(event->again());
     }
 
     void again () {
-        PlayAgain.getScene().getWindow().hide();
+        PlayAgainButton.getScene().getWindow().hide();
     }
 }

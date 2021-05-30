@@ -15,16 +15,16 @@ import java.util.Stack;
 public class GameProcess {
     private Stack<Integer> PlayersWay;
     private ArrayList<Pair> AllowedSteps;
-    private Button UndoButton;
+    private final Button UndoButton;
     private Field field;
 
     public GameProcess (Field field, Button UndoButton) {
-        setField(field, UndoButton);
+        this.UndoButton = UndoButton;
+        setField(field);
     }
 
-    public void setField (Field field, Button CancelButton) {
+    public void setField (Field field) {
         this.field = field;
-        this.UndoButton = CancelButton;
         PlayersWay = new Stack<>();
         AllowedSteps = new ArrayList<>();
         PlayersWay.push(1);
@@ -52,7 +52,7 @@ public class GameProcess {
         field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #e67e22");
     }
 
-    void MakeAllWhite () {
+    private void MakeAllWhite () {
         UndoButton.setStyle("-fx-background-color: #ecf0f1");
 
         for (int i = 0; i < Field.FieldSize; i++) {
@@ -64,7 +64,7 @@ public class GameProcess {
         }
     }
 
-    void ClickArrow (int i, int j) {
+    private void ClickArrow (int i, int j) {
         if (IsAllowed(i, j, AllowedSteps)) {
             field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #f1c40f");
             PlayersWay.push(field.ArrowNum(i, j));
@@ -77,7 +77,7 @@ public class GameProcess {
         }
     }
 
-    void LoadWinWindow () {
+    private void LoadWinWindow () {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("win_window.fxml"));
         try {
@@ -91,10 +91,11 @@ public class GameProcess {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(field.getPane().getScene().getWindow());
         stage.setOnHidden(event-> NewField());
+        stage.setResizable(false);
         stage.show();
     }
 
-    boolean IsAllowed(int i, int j, ArrayList<Pair> allowed) {
+    private boolean IsAllowed(int i, int j, ArrayList<Pair> allowed) {
         boolean res = false;
 
         for (Pair pair : allowed) {
@@ -107,13 +108,13 @@ public class GameProcess {
         return res;
     }
 
-    void ClearPlayersWay() {
+    public void ClearPlayersWay() {
         PlayersWay.clear();
         PlayersWay.push(1);
         HighlightAllowed();
     }
 
-    ArrayList<Pair> FindAllowed (Stack<Integer> way) {
+    private ArrayList<Pair> FindAllowed (Stack<Integer> way) {
         ArrayList<Pair> res = new ArrayList<>();
         int i = 0, j = 0;
 
@@ -166,7 +167,7 @@ public class GameProcess {
         return res;
     }
 
-    boolean WasHere (int step, Stack<Integer> way) {
+    private boolean WasHere (int step, Stack<Integer> way) {
         boolean res = false;
         Stack<Integer> WayCopy = (Stack<Integer>) way.clone();
 
@@ -178,7 +179,7 @@ public class GameProcess {
         return !res;
     }
 
-    void Bypass (Stack<Integer> AnswerWay, int step) {
+    private void Bypass (Stack<Integer> AnswerWay, int step) {
         AnswerWay.push(step);
         ArrayList<Pair> poss = FindAllowed(AnswerWay);
 
@@ -193,7 +194,7 @@ public class GameProcess {
         }
     }
 
-    ArrayList<Integer> FindAnswer(Stack<Integer> way) {
+    public ArrayList<Integer> FindAnswer(Stack<Integer> way) {
         Stack<Integer> AnswerWay = (Stack<Integer>) way.clone();
         ArrayList<Pair> allowed = FindAllowed(AnswerWay);
 
@@ -210,15 +211,15 @@ public class GameProcess {
         }
     }
 
-    ArrayList<Integer> FindAnswer() {
+    public ArrayList<Integer> FindAnswer() {
         return FindAnswer(PlayersWay);
     }
 
-    void NewField () {
-        setField(new Field(field.getPane()), UndoButton);
+    public void NewField () {
+        setField(new Field(field.getPane()));
     }
 
-    void Undo () {
+    public void Undo () {
         if (PlayersWay.size() > 1) {
             PlayersWay.pop();
             AllowedSteps.clear();
@@ -226,7 +227,7 @@ public class GameProcess {
         }
     }
 
-    void hint () {
+    public void hint () {
         if (PlayersWay.size() != Field.ArrowsNum) {
             ArrayList<Integer> answer = FindAnswer();
             if (answer != null) {
