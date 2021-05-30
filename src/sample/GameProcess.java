@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -39,11 +40,12 @@ public class GameProcess {
     public void HidhlightPosible () {
         AllowedSteps = FindPossible(PlayersWay);
 
-        field.getCancelButton().setStyle("-fx-background-color: #bdc3c7");
+        field.getCancelButton().setStyle("-fx-background-color: #ecf0f1");
         MakeAllWhite ();
 
         for (Pair pair : AllowedSteps) {
             field.getArrow(pair.getY(), pair.getX()).setStyle("-fx-background-color: #1abc9c");
+            field.getArrow(pair.getY(), pair.getX()).setCursor(Cursor.HAND);
         }
 
         field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #e67e22");
@@ -53,7 +55,8 @@ public class GameProcess {
         for (int i = 0; i < Field.FieldSize; i++) {
             for (int j = 0; j < Field.FieldSize; j++) {
                 if (WasHere(i * Field.FieldSize + j + 1, PlayersWay))
-                    field.getArrow(i, j).setStyle("-fx-background-color: #bdc3c7");
+                    field.getArrow(i, j).setStyle("-fx-background-color: #ecf0f1");
+                field.getArrow(i, j).setCursor(Cursor.DEFAULT);
             }
         }
     }
@@ -223,9 +226,9 @@ public class GameProcess {
         if (PlayersWay.size() != Field.ArrowsNum) {
             ArrayList<Integer> answer = Answer();
             if (answer != null) {
-                field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: #3498db");
+                field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: #2980b9");
             } else {
-                field.getCancelButton().setStyle("-fx-background-color: #3498db");
+                field.getCancelButton().setStyle("-fx-background-color: #2980b9");
             }
         }
     }
