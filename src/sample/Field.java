@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Field {
-    public static final int FieldSize = 6;
+    public static final int FieldSize = 5;
     public static int ArrowsNum;
     private final AnchorPane pane;
     private final Button CancelButton;
@@ -110,7 +111,9 @@ public class Field {
     void create_buttons () {
         arrows = new ArrayList<>();
         Image ArrowImage;
-        ArrowImage = new Image(getClass().getResourceAsStream("picture.png"));
+        ArrowImage = new Image(getClass().getResourceAsStream("arrow.png"));
+        Image FinishImage;
+        FinishImage = new Image(getClass().getResourceAsStream("finish.png"));
 
         for (int i = 0; i < FieldSize; i++) {
             arrows.add(new ArrayList<>());
@@ -129,17 +132,17 @@ public class Field {
                 ArrowButton.setPrefHeight(45);
                 ArrowButton.setPrefWidth(45);
 
+                ImageView ArrowImageView = new ImageView();
+
                 if (i != FieldSize - 1 || j != FieldSize - 1) {
-                    ImageView ArrowImageView = new ImageView();
                     ArrowImageView.setImage(ArrowImage);
-                    ArrowImageView.setFitWidth(25);
-                    ArrowImageView.setFitHeight(25);
-                    System.out.println(directions.get(i).get(j));
-                    ArrowImageView.setRotate(directions.get(i).get(j) * 45 + 90);
-                    ArrowButton.graphicProperty().setValue(ArrowImageView);
+                    ArrowImageView.setRotate(directions.get(i).get(j) * 45);
                 } else {
-                    ArrowButton.setText(Integer.toString(25));
+                    ArrowImageView.setImage(FinishImage);
                 }
+                ArrowImageView.setFitWidth(25);
+                ArrowImageView.setFitHeight(25);
+                ArrowButton.graphicProperty().setValue(ArrowImageView);
 
                 pane.getChildren().add(ArrowButton);
 

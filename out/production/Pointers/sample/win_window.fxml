@@ -4,14 +4,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-
-<AnchorPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.WinWindow">
+<AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.WinWindow">
    <children>
-      <Label layoutX="36.0" layoutY="27.0" text="You win!">
+      <Label layoutX="36.0" layoutY="27.0" text="You win!" textFill="#ecf0f1">
          <font>
             <Font size="31.0" />
          </font>
       </Label>
-      <Button fx:id="PlayAgain" layoutX="57.0" layoutY="117.0" mnemonicParsing="false" text="Play again" />
+      <Button fx:id="PlayAgain" layoutX="57.0" layoutY="117.0" mnemonicParsing="false" style="-fx-background-color: #bdc3c7;" text="Play again" />
    </children>
 </AnchorPane>

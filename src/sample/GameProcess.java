@@ -39,33 +39,33 @@ public class GameProcess {
     public void HidhlightPosible () {
         AllowedSteps = FindPossible(PlayersWay);
 
-        field.getCancelButton().setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
+        field.getCancelButton().setStyle("-fx-background-color: #bdc3c7");
         MakeAllWhite ();
 
         for (Pair pair : AllowedSteps) {
-            field.getArrow(pair.getY(), pair.getX()).setStyle("-fx-background-color: green; -fx-border-width: 1; -fx-border-color: black");
+            field.getArrow(pair.getY(), pair.getX()).setStyle("-fx-background-color: #1abc9c");
         }
 
-        field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: yellow; -fx-border-width: 1; -fx-border-color: black");
+        field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #e67e22");
     }
 
     void MakeAllWhite () {
         for (int i = 0; i < Field.FieldSize; i++) {
             for (int j = 0; j < Field.FieldSize; j++) {
                 if (WasHere(i * Field.FieldSize + j + 1, PlayersWay))
-                    field.getArrow(i, j).setStyle("-fx-background-color: white; -fx-border-width: 1; -fx-border-color: black");
+                    field.getArrow(i, j).setStyle("-fx-background-color: #bdc3c7");
             }
         }
     }
 
     void ClickArrow (int i, int j) {
         if ((i != Field.FieldSize - 1 || j != Field.FieldSize - 1) && IsPossible(i, j, AllowedSteps)) {
-            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
+            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #f1c40f");
             PlayersWay.push(field.ArrowNum(i, j));
             AllowedSteps.clear();
             HidhlightPosible ();
         } else if (i == Field.FieldSize - 1 && j == Field.FieldSize - 1 && IsPossible(i, j, AllowedSteps)) {
-            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: red; -fx-border-width: 1; -fx-border-color: black");
+            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #f1c40f");
             PlayersWay.push(field.ArrowNum(i, j));
             AllowedSteps.clear();
             HidhlightPosible ();
@@ -223,9 +223,9 @@ public class GameProcess {
         if (PlayersWay.size() != Field.ArrowsNum) {
             ArrayList<Integer> answer = Answer();
             if (answer != null) {
-                field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: blue; -fx-border-width: 1; -fx-border-color: black");
+                field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: #3498db");
             } else {
-                field.getCancelButton().setStyle("-fx-background-color: blue");
+                field.getCancelButton().setStyle("-fx-background-color: #3498db");
             }
         }
     }
