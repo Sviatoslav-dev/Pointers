@@ -27,8 +27,8 @@ public class Controller {
         Restart.setOnAction(event->ClickRestart());
         hint.setOnAction(event->ClickHint());
         Clear.setOnAction(event->ClickClear());
-        Field field = new Field(Pane, Cancel);
-        gp = new GameProcess(field);
+        Field field = new Field(Pane);
+        gp = new GameProcess(field, Cancel);
     }
 
     void ClickCancel () {

@@ -1,9 +1,11 @@
 package sample;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -14,15 +16,17 @@ import java.util.Stack;
 public class GameProcess {
     private Stack<Integer> PlayersWay;
     private ArrayList<Pair> AllowedSteps;
+    private Button CancelButton;
 
     private Field field;
 
-    public GameProcess (Field field) {
-        setField(field);
+    public GameProcess (Field field, Button CancelButton) {
+        setField(field, CancelButton);
     }
 
-    public void setField (Field field) {
+    public void setField (Field field, Button CancelButton) {
         this.field = field;
+        this.CancelButton = CancelButton;
         PlayersWay = new Stack<>();
         AllowedSteps = new ArrayList<>();
         PlayersWay.push(1);
@@ -40,7 +44,8 @@ public class GameProcess {
     public void HidhlightPosible () {
         AllowedSteps = FindPossible(PlayersWay);
 
-        field.getCancelButton().setStyle("-fx-background-color: #ecf0f1");
+        CancelButton.setStyle("-fx-background-color: #ecf0f1");
+
         MakeAllWhite ();
 
         for (Pair pair : AllowedSteps) {
@@ -211,7 +216,7 @@ public class GameProcess {
     }
 
     void Restart () {
-        setField(new Field(field.getPane(), field.getCancelButton()));
+        setField(new Field(field.getPane()), CancelButton);
     }
 
     void CancelStep () {
@@ -228,7 +233,7 @@ public class GameProcess {
             if (answer != null) {
                 field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: #2980b9");
             } else {
-                field.getCancelButton().setStyle("-fx-background-color: #2980b9");
+                CancelButton.setStyle("-fx-background-color: #2980b9");
             }
         }
     }

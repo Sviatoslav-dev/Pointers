@@ -13,15 +13,13 @@ public class Field {
     public static final int FieldSize = 5;
     public static int ArrowsNum;
     private final AnchorPane pane;
-    private final Button CancelButton;
 
     private ArrayList<ArrayList<Integer>> directions;
     private ArrayList<ArrayList<Button>> arrows;
 
-    public Field (AnchorPane pane, Button CancelButton) {
+    public Field (AnchorPane pane) {
         ArrowsNum = FieldSize * FieldSize;
         this.pane = pane;
-        this.CancelButton = CancelButton;
         ArrayList<ArrayList<Integer>> StartWay = InputStartWay();
         InputDirections (StartWay);
         create_buttons ();
@@ -214,10 +212,6 @@ public class Field {
 
     AnchorPane getPane () {
         return pane;
-    }
-
-    Button getCancelButton() {
-        return CancelButton;
     }
 
     int getDirection (int i, int j) {
