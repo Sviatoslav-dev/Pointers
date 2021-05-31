@@ -5,7 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 
 public class GameWindow {
-    public AnchorPane Pane;
+    @FXML
+    private AnchorPane Pane;
 
     @FXML
     private Button UndoButton;
