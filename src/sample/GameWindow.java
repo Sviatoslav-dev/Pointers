@@ -27,8 +27,7 @@ public class GameWindow {
         NewFieldButton.setOnAction(event-> ClickNewField());
         HintButton.setOnAction(event->ClickHint());
         ClearButton.setOnAction(event->ClickClear());
-        Field field = new Field(Pane);
-        gp = new GameProcess(field, UndoButton);
+        gp = new GameProcess(new Field(Pane), UndoButton);
     }
 
     void ClickUndo() {
@@ -36,7 +35,7 @@ public class GameWindow {
     }
 
     void ClickNewField () {
-        gp.NewField();
+        gp.setField(new Field(Pane));
     }
 
     void ClickHint () {

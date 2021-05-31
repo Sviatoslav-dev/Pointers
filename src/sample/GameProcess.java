@@ -90,7 +90,7 @@ public class GameProcess {
         stage.setScene(new Scene(root));
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(field.getPane().getScene().getWindow());
-        stage.setOnHidden(event-> NewField());
+        stage.setOnHidden(event-> setField(new Field (field.getPane())));
         stage.setResizable(false);
         stage.show();
     }
@@ -213,10 +213,6 @@ public class GameProcess {
 
     public ArrayList<Integer> FindAnswer() {
         return FindAnswer(PlayersWay);
-    }
-
-    public void NewField () {
-        setField(new Field(field.getPane()));
     }
 
     public void Undo () {

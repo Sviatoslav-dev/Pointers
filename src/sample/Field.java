@@ -36,9 +36,7 @@ public class Field {
             }
         }
 
-        int currentY = 0;
-        int currentX = 0;
-        int currentNum = 1;
+        int currentY = 0, currentX = 0, currentNum = 1;
 
         StartWay.get(0).set(0, 1);
         StartWay.get(FieldSize - 1).set(FieldSize - 1, ArrowsNum);
