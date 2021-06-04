@@ -13,63 +13,63 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class GameProcess {
-    private Stack<Integer> PlayersWay;
-    private ArrayList<Pair> AllowedSteps;
-    private final Button UndoButton;
-    private Field field;
+    private Stack<Integer> PlayersWay; //Шлях ігрока
+    private ArrayList<Pair> AllowedSteps; //Клітинки на які можна перейти
+    private final Button UndoButton; //Кнопка відміни поля
+    private Field field; //Поле
 
-    public GameProcess (Field field, Button UndoButton) {
+    public GameProcess (Field field, Button UndoButton) { //Конструктор
         this.UndoButton = UndoButton;
         setField(field);
     }
 
-    public void setField (Field field) {
+    public void setField (Field field) { //Створення функціоналу для поля
         this.field = field;
         PlayersWay = new Stack<>();
         AllowedSteps = new ArrayList<>();
         PlayersWay.push(1);
-        HighlightAllowed();
+        Highlight();
 
         for (int i = 0; i < Field.FieldSize; i++) {
             for (int j = 0; j < Field.FieldSize; j++) {
                 int finalI = i;
                 int finalJ = j;
-                field.getArrow(i, j).setOnAction(event->ClickArrow(finalI, finalJ));
+                field.getCell(i, j).setOnAction(event-> ClickCell(finalI, finalJ));
             }
         }
     }
 
-    public void HighlightAllowed() {
+    private void Highlight () { //Виділення клітинок
         AllowedSteps = FindAllowed(PlayersWay);
 
         MakeAllWhite ();
 
         for (Pair pair : AllowedSteps) {
-            field.getArrow(pair.getY(), pair.getX()).setStyle("-fx-background-color: #1abc9c");
-            field.getArrow(pair.getY(), pair.getX()).setCursor(Cursor.HAND);
+            field.getCell(pair.getFirst(), pair.getSecond()).setStyle("-fx-background-color: #1abc9c");
+            field.getCell(pair.getFirst(), pair.getSecond()).setCursor(Cursor.HAND);
         }
 
-        field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #e67e22");
+        field.getCell(field.CellY(PlayersWay.peek()), field.CellX(PlayersWay.peek())).setStyle("-fx-background-color: #e67e22");
     }
 
-    private void MakeAllWhite () {
+    private void MakeAllWhite () { //Робить всі клітинки та кнопку відміни кроку білими
         UndoButton.setStyle("-fx-background-color: #ecf0f1");
 
         for (int i = 0; i < Field.FieldSize; i++) {
             for (int j = 0; j < Field.FieldSize; j++) {
                 if (WasHere(i * Field.FieldSize + j + 1, PlayersWay))
-                    field.getArrow(i, j).setStyle("-fx-background-color: #ecf0f1");
-                field.getArrow(i, j).setCursor(Cursor.DEFAULT);
+                    field.getCell(i, j).setStyle("-fx-background-color: #ecf0f1");
+                field.getCell(i, j).setCursor(Cursor.DEFAULT);
             }
         }
     }
 
-    private void ClickArrow (int i, int j) {
+    private void ClickCell(int i, int j) { //Натискання на кнопку
         if (IsAllowed(i, j, AllowedSteps)) {
-            field.getArrow(field.ArrowY(PlayersWay.peek()), field.ArrowX(PlayersWay.peek())).setStyle("-fx-background-color: #f1c40f");
-            PlayersWay.push(field.ArrowNum(i, j));
+            field.getCell(field.CellY(PlayersWay.peek()), field.CellX(PlayersWay.peek())).setStyle("-fx-background-color: #f1c40f");
+            PlayersWay.push(field.CellNum(i, j));
             AllowedSteps.clear();
-            HighlightAllowed();
+            Highlight();
 
             if (i == Field.FieldSize - 1 && j == Field.FieldSize - 1) {
                 LoadWinWindow ();
@@ -77,7 +77,7 @@ public class GameProcess {
         }
     }
 
-    private void LoadWinWindow () {
+    private void LoadWinWindow () { //Створення вікна при виграші
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("win_window.fxml"));
         try {
@@ -95,11 +95,11 @@ public class GameProcess {
         stage.show();
     }
 
-    private boolean IsAllowed(int i, int j, ArrayList<Pair> allowed) {
+    private boolean IsAllowed(int i, int j, ArrayList<Pair> allowed) { //Чи можна переміститись нп дану клітинку
         boolean res = false;
 
         for (Pair pair : allowed) {
-            if (pair.getY() == i && pair.getX() == j) {
+            if (pair.getFirst() == i && pair.getSecond() == j) {
                 res = true;
                 break;
             }
@@ -108,49 +108,49 @@ public class GameProcess {
         return res;
     }
 
-    public void ClearPlayersWay() {
+    public void ClearPlayersWay() { //Очищення шляху ігрока
         PlayersWay.clear();
         PlayersWay.push(1);
-        HighlightAllowed();
+        Highlight();
     }
 
-    private ArrayList<Pair> FindAllowed (Stack<Integer> way) {
+    private ArrayList<Pair> FindAllowed (Stack<Integer> way) { //Пошук клітинок на які можна перейти
         ArrayList<Pair> res = new ArrayList<>();
         int i = 0, j = 0;
 
-        int currentY = field.ArrowY(way.peek());
-        int currentX = field.ArrowX(way.peek());
+        int currentY = field.CellY(way.peek());
+        int currentX = field.CellX(way.peek());
 
         switch (field.getDirection(currentY, currentX)) {
             case 0:
                 i = 0;
                 j = -1;
                 break;
-            case 1:
+            case 45:
                 i = 1;
                 j = -1;
                 break;
-            case 2:
+            case 90:
                 i = 1;
                 j = 0;
                 break;
-            case 3:
+            case 135:
                 i = 1;
                 j = 1;
                 break;
-            case 4:
+            case 180:
                 i = 0;
                 j = 1;
                 break;
-            case 5:
+            case 225:
                 i = -1;
                 j = 1;
                 break;
-            case 6:
+            case 270:
                 i = -1;
                 j = 0;
                 break;
-            case 7:
+            case 315:
                 i = -1;
                 j = -1;
                 break;
@@ -159,7 +159,7 @@ public class GameProcess {
         }
 
         for (int y = currentY, x = currentX; x < Field.FieldSize && x >= 0 && y >= 0 && y < Field.FieldSize; x += i, y += j) {
-            if ((((y != 0 || x != 0) && (y != Field.FieldSize - 1 || x != Field.FieldSize - 1)) || way.size() == Field.ArrowsNum - 1) && (y != currentY || x != currentX) && WasHere(field.ArrowNum(y, x), way)) {
+            if ((((y != 0 || x != 0) && (y != Field.FieldSize - 1 || x != Field.FieldSize - 1)) || way.size() == Field.CellNum - 1) && (y != currentY || x != currentX) && WasHere(field.CellNum(y, x), way)) {
                 res.add(new Pair(y, x));
             }
         }
@@ -167,7 +167,7 @@ public class GameProcess {
         return res;
     }
 
-    private boolean WasHere (int step, Stack<Integer> way) {
+    private boolean WasHere (int step, Stack<Integer> way) { //Чи був на на клітинці
         boolean res = false;
         Stack<Integer> WayCopy = (Stack<Integer>) way.clone();
 
@@ -179,55 +179,51 @@ public class GameProcess {
         return !res;
     }
 
-    private void Bypass (Stack<Integer> AnswerWay, int step) {
+    private void Bypass (Stack<Integer> AnswerWay, int step) { //Обхід дерева
         AnswerWay.push(step);
         ArrayList<Pair> poss = FindAllowed(AnswerWay);
 
         if (poss.size() > 0) {
             for (Pair pair : poss) {
-                Bypass(AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
+                Bypass(AnswerWay, field.CellNum(pair.getFirst(), pair.getSecond()));
             }
         }
 
-        if (AnswerWay.size() != Field.ArrowsNum) {
+        if (AnswerWay.size() != Field.CellNum) {
             AnswerWay.pop();
         }
     }
 
-    public ArrayList<Integer> FindAnswer(Stack<Integer> way) {
-        Stack<Integer> AnswerWay = (Stack<Integer>) way.clone();
+    private ArrayList<Integer> FindAnswer() { //Пошук розв'язку
+        Stack<Integer> AnswerWay = (Stack<Integer>) PlayersWay.clone();
         ArrayList<Pair> allowed = FindAllowed(AnswerWay);
 
         if (allowed != null) {
             for (Pair pair : allowed) {
-                Bypass(AnswerWay, field.ArrowNum(pair.getY(), pair.getX()));
+                Bypass(AnswerWay, field.CellNum(pair.getFirst(), pair.getSecond()));
             }
         }
 
-        if (AnswerWay.size() == Field.ArrowsNum) {
+        if (AnswerWay.size() == Field.CellNum) {
             return new ArrayList<>(AnswerWay);
         } else {
             return null;
         }
     }
 
-    public ArrayList<Integer> FindAnswer() {
-        return FindAnswer(PlayersWay);
-    }
-
-    public void Undo () {
+    public void Undo () { //Відміна кроку
         if (PlayersWay.size() > 1) {
             PlayersWay.pop();
             AllowedSteps.clear();
-            HighlightAllowed();
+            Highlight();
         }
     }
 
-    public void hint () {
-        if (PlayersWay.size() != Field.ArrowsNum) {
+    public void hint () { //Підказка
+        if (PlayersWay.size() != Field.CellNum) {
             ArrayList<Integer> answer = FindAnswer();
             if (answer != null) {
-                field.getArrow(field.ArrowY(answer.get(PlayersWay.size())), field.ArrowX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: #2980b9");
+                field.getCell(field.CellY(answer.get(PlayersWay.size())), field.CellX(answer.get(PlayersWay.size()))).setStyle("-fx-background-color: #2980b9");
             } else {
                 UndoButton.setStyle("-fx-background-color: #2980b9");
             }

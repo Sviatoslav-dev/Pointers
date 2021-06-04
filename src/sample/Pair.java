@@ -1,19 +1,19 @@
 package sample;
 
 public class Pair {
-    private final int y;
-    private final int x;
+    private final int first; //Перший елемент
+    private final int second; //Другий елемент
 
-    Pair(int y, int x) {
-        this.x = x;
-        this.y = y;
+    Pair(int first, int second) { //Конструктор
+        this.first = first;
+        this.second = second;
     }
 
-    int getY () {
-        return y;
+    int getFirst() { //Отримати перший елемент
+        return first;
     }
 
-    int getX () {
-        return x;
+    int getSecond() { //Отримати другий елемент
+        return second;
     }
 }

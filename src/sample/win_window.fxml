@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.WinWindow">
+<AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #34495e;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.WinWindowController">
    <children>
       <Label layoutX="24.0" layoutY="26.0" text="You win!" textFill="WHITE">
          <font>
