@@ -12,16 +12,35 @@ public class Field {
     public static final int FieldSize = 5; //Розмір поля
     public static int CellNum; //Кількість клітинок
     private final AnchorPane pane; //Панель
+    public int required;
+    public int requiredCell;
 
     private ArrayList<ArrayList<Integer>> directions; //Кут нарямку вказівників
     private ArrayList<ArrayList<Button>> cells; //Клітинка
 
-    public Field (AnchorPane pane) { //Створення поля
+    public Field (AnchorPane pane, int required) { //Створення поля
+        this.required = required;
         CellNum = FieldSize * FieldSize;
         this.pane = pane;
         ArrayList<ArrayList<Integer>> StartWay = InputStartWay();
         InputDirections (StartWay);
         create_cells();
+    }
+
+    int setRequired (Stack<Integer> way) {
+        int res = 0;
+        Stack<Integer> WayCopy = (Stack<Integer>) way.clone();
+
+        for (int i = 0; i < CellNum; i++) {
+            if (WayCopy.size() == required) {
+                res = WayCopy.peek();
+            }
+
+            WayCopy.pop();
+        }
+
+        System.out.println(res);
+        return res;
     }
 
     private ArrayList<ArrayList<Integer>> InputStartWay() { //Генерація шляху
@@ -85,6 +104,9 @@ public class Field {
                 currentNum--;
             }
         }
+
+        requiredCell = setRequired(way);
+
         return StartWay;
     }
 

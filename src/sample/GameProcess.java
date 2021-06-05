@@ -49,6 +49,8 @@ public class GameProcess {
             field.getCell(pair.getFirst(), pair.getSecond()).setCursor(Cursor.HAND);
         }
 
+        field.getCell(field.CellY(field.requiredCell), field.CellX(field.requiredCell)).setStyle("-fx-background-color: pink");
+
         field.getCell(field.CellY(PlayersWay.peek()), field.CellX(PlayersWay.peek())).setStyle("-fx-background-color: #e67e22");
     }
 
@@ -90,7 +92,7 @@ public class GameProcess {
         stage.setScene(new Scene(root));
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(field.getPane().getScene().getWindow());
-        stage.setOnHidden(event-> setField(new Field (field.getPane())));
+        stage.setOnHidden(event-> setField(new Field (field.getPane(), field.required)));
         stage.setResizable(false);
         stage.show();
     }
@@ -159,7 +161,9 @@ public class GameProcess {
         }
 
         for (int y = currentY, x = currentX; x < Field.FieldSize && x >= 0 && y >= 0 && y < Field.FieldSize; x += i, y += j) {
-            if ((((y != 0 || x != 0) && (y != Field.FieldSize - 1 || x != Field.FieldSize - 1)) || way.size() == Field.CellNum - 1) && (y != currentY || x != currentX) && WasHere(field.CellNum(y, x), way)) {
+            if ((((y != 0 || x != 0) && (y != Field.FieldSize - 1 || x != Field.FieldSize - 1)) || way.size() == Field.CellNum - 1) && (y != currentY || x != currentX) && WasHere(field.CellNum(y, x), way) && field.CellNum(y, x) != field.requiredCell) {
+                res.add(new Pair(y, x));
+            } else if (way.size() == field.required - 1 && field.CellNum(y, x) == field.requiredCell) {
                 res.add(new Pair(y, x));
             }
         }
